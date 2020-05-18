@@ -1,4 +1,5 @@
 # Quizzy
+![alt text](https://raw.githubusercontent.com/hkp27299/Quizy/master/assets/Untitled%20Diagram.png?token=AKQGYTRXF3AFYFK7E24WVGK6ZOVQ6)
 ## Description of files:
 
 **1)	Main.dart:** This is main file of project which contains all navigation paths and app loading details.</br>
