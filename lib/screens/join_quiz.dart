@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:quizzy/auth.dart';
-import 'package:quizzy/play_quiz.dart';
+import '../services/auth.dart';
+import 'play_quiz.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
+import '../widget/loading.dart';
+import '../widget/buttonInk.dart';
 final HttpsCallable callable =
     CloudFunctions.instance.getHttpsCallable(functionName: 'checkQuiz');
 
@@ -24,13 +25,14 @@ class _JoinQuizState extends State<JoinQuiz> {
 
     super.initState();
   }
-
+final GlobalKey<State> _keyLoader = new GlobalKey<State>();
   String quizid = '';
   Future _checkQuiz() async {
     try {
+        Dialogs.showLoadingDialog(context, _keyLoader);
       final HttpsCallableResult result = await callable.call(
         <String, dynamic>{'quizId': quizid, 'uid': uidd},
-      );
+      ); Navigator.of(_keyLoader.currentContext,rootNavigator: true).pop();
       print(result.data);
       status = result.data['result'];
       
@@ -115,31 +117,7 @@ class _JoinQuizState extends State<JoinQuiz> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(80.0)),
                 padding: EdgeInsets.all(0.0),
-                child: Ink(
-                  decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromRGBO(30, 186, 142, 1.0),
-                          Color.fromRGBO(30, 142, 186, 1.0)
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ),
-                      borderRadius: BorderRadius.circular(30.0)),
-                  child: Container(
-                    constraints:
-                        BoxConstraints(maxWidth: 300.0, minHeight: 50.0),
-                    alignment: Alignment.center,
-                    child: Text(
-                      "Join Game",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
+                child: buttonInk('Join Game'),
               ),
             ),
           ],

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:quizzy/game_home.dart';
-import 'auth.dart';
+import 'game_home.dart';
+import '../services/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 

@@ -1,10 +1,10 @@
 import 'dart:async';
-
+import '../widget/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:quizzy/game_home.dart';
+import 'game_home.dart';
 import 'user_result.dart';
-import 'auth.dart';
+import '../services/auth.dart';
 
 final HttpsCallable callable =
     CloudFunctions.instance.getHttpsCallable(functionName: 'addScore');
@@ -33,7 +33,7 @@ class _PlayQuizState extends State<PlayQuiz> {
         ModalRoute.of(context).settings.arguments as Map<String, Object>;
     List que = arg['que'];
     String gameid = arg['gameid'];
-
+    final GlobalKey<State> _keyLoader = new GlobalKey<State>();
     void _showDialog() {
       showDialog(
         context: context,
@@ -63,8 +63,11 @@ class _PlayQuizState extends State<PlayQuiz> {
 
     Future _quizdone() async {
       try {
+        Dialogs.showLoadingDialog(context, _keyLoader);
         final HttpsCallableResult result = await callable.call(
             <String, dynamic>{'uid': uidd, 'score': score, 'quizId': gameid});
+
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         print(result.data);
       } on CloudFunctionsException catch (e) {
         print('caught firebase functions exception');
@@ -82,7 +85,7 @@ class _PlayQuizState extends State<PlayQuiz> {
         return Expanded(
           child: Center(
             child: new TextField(
-              controller: ansctrl,        
+              controller: ansctrl,
               decoration: new InputDecoration(
                   border: new OutlineInputBorder(
                     borderRadius: const BorderRadius.all(
@@ -174,9 +177,9 @@ class _PlayQuizState extends State<PlayQuiz> {
     }
 
     void _scorecount() {
-     print(ans);
-     print(ansctrl.text);
-     
+      print(ans);
+      print(ansctrl.text);
+
       if (ans == que[qindex]['answer'] ||
           ansctrl.text == que[qindex]['answer']) {
         setState(() {
@@ -289,7 +292,7 @@ class _PlayQuizState extends State<PlayQuiz> {
                   Container(
                     height: 50.0,
                     child: RaisedButton(
-                      onPressed: () {                       
+                      onPressed: () {
                         _scorecount();
                         _nextquestion();
                       },

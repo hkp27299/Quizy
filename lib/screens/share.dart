@@ -1,15 +1,9 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'play_quiz.dart';
-import 'dart:typed_data';
-import 'package:flutter_share_file/flutter_share_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
-
-import 'package:flutter/services.dart';
-
+import '../widget/shareing.dart';
+import '../widget/buttonInkwithimage.dart';
 class Share extends StatefulWidget {
   static const routename = '/share';
 
@@ -28,22 +22,6 @@ class _ShareState extends State<Share> {
     String gameid = args['gameid'];
     String qname = args['qname'];
     String imgpath = args['imgpath'];
-
-    void convertWidgetToImage() async {
-      RenderRepaintBoundary renderRepaintBoundary =
-          _containerKey.currentContext.findRenderObject();
-      ui.Image boxImage = await renderRepaintBoundary.toImage(pixelRatio: 1);
-      ByteData byteData =
-          await boxImage.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List uInt8List = byteData.buffer.asUint8List();
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.jpg').create();
-      file.writeAsBytesSync(uInt8List);
-      File testFile = new File("${tempDir.path}/image.jpg");
-      print(testFile);
-      FlutterShareFile.shareImage(
-          tempDir.path, "image.jpg", 'Connect Quiz with id : $gameid');
-    }
 
     return Scaffold(
       body: RepaintBoundary(
@@ -105,7 +83,7 @@ class _ShareState extends State<Share> {
                 padding: const EdgeInsets.all(3.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                  color: Color.fromRGBO(255, 43, 230,1.0),
+                  color: Color.fromRGBO(255, 43, 230, 1.0),
                 ),
                 child: Text(
                   gameid,
@@ -123,44 +101,14 @@ class _ShareState extends State<Share> {
                 height: 50.0,
                 child: RaisedButton(
                   onPressed: () {
-                    convertWidgetToImage();
+                    convertWidgetToImage(
+                        'Connect Quiz with id : $gameid \nYou can get game here : https://play.google.com/store/apps/details?id=com.superbros.quizzy',
+                        _containerKey);
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80.0)),
                   padding: EdgeInsets.all(0.0),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromRGBO(30, 186, 142, 1.0),
-                            Color.fromRGBO(30, 142, 186, 1.0)
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Container(
-                      constraints:
-                          BoxConstraints(maxWidth: 200.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 20),
-                          Icon(Icons.share,color: Colors.white,),
-                          SizedBox(width: 30),
-                          Text(
-                            "Share",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: buttonInkWithIcon('Share',Icons.share)
                 ),
               ),
               SizedBox(
@@ -179,39 +127,7 @@ class _ShareState extends State<Share> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(80.0)),
                   padding: EdgeInsets.all(0.0),
-                  child: Ink(
-                    decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color.fromRGBO(30, 186, 142, 1.0),
-                            Color.fromRGBO(30, 142, 186, 1.0)
-                          ],
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ),
-                        borderRadius: BorderRadius.circular(30.0)),
-                    child: Container(
-                      constraints:
-                          BoxConstraints(maxWidth: 200.0, minHeight: 50.0),
-                      alignment: Alignment.center,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 20),
-                          Icon(Icons.play_arrow,color: Colors.white,),
-                          SizedBox(width: 30),
-                          Text(
-                            "Start",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child: buttonInkWithIcon('Start',Icons.play_arrow),
                 ),
               ),
             ],

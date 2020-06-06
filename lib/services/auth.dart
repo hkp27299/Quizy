@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
-
 final HttpsCallable callable =
     CloudFunctions.instance.getHttpsCallable(functionName: 'addUser');
 final FirebaseAuth _auth = FirebaseAuth.instance;

@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
-
+import '../widget/loading.dart';
 import 'game_home.dart';
 import 'leaderboard.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-
-import 'dart:io';
-
-import 'dart:typed_data';
-import 'package:flutter_share_file/flutter_share_file.dart';
-import 'package:path_provider/path_provider.dart';
+import '../widget/shareing.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
-
-import 'package:flutter/services.dart';
-
+import '../widget/buttonInkwithimage.dart';
+import '../widget/buttonInk.dart';
 final HttpsCallable callable =
     CloudFunctions.instance.getHttpsCallable(functionName: 'getScore');
 
@@ -37,27 +30,13 @@ class _UserResultState extends State<UserResult> {
     int score = arg['score'];
     var data;
 
-    void convertWidgetToImage() async {
-      RenderRepaintBoundary renderRepaintBoundary =
-          _containerKey.currentContext.findRenderObject();
-      ui.Image boxImage = await renderRepaintBoundary.toImage(pixelRatio: 1);
-      ByteData byteData =
-          await boxImage.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List uInt8List = byteData.buffer.asUint8List();
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.jpg').create();
-      file.writeAsBytesSync(uInt8List);
-      File testFile = new File("${tempDir.path}/image.jpg");
-      print(testFile);
-      FlutterShareFile.shareImage(tempDir.path, "image.jpg",
-          'Beat my score $score join with id : $gameid');
-    }
-
+    final GlobalKey<State> _keyLoader = new GlobalKey<State>();
     Future _getdata() async {
       try {
+        Dialogs.showLoadingDialog(context, _keyLoader);
         final HttpsCallableResult result =
             await callable.call(<String, dynamic>{'quizId': gameid});
-
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         data = result.data;
         print(gameid);
         print(data);
@@ -134,7 +113,8 @@ class _UserResultState extends State<UserResult> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               ListTile(
-                                title: Text(gameid,textAlign: TextAlign.center,
+                                title: Text(gameid,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -154,44 +134,14 @@ class _UserResultState extends State<UserResult> {
                   height: 50.0,
                   child: RaisedButton(
                     onPressed: () {
-                      convertWidgetToImage();
+                      convertWidgetToImage(
+                          'Beat my score $score join with id : $gameid \nYou can get game here : https://play.google.com/store/apps/details?id=com.superbros.quizzy',
+                          _containerKey);
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
                     padding: EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromRGBO(30, 186, 142, 1.0),
-                              Color.fromRGBO(30, 142, 186, 1.0)
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0)),
-                      child: Container(
-                        constraints:
-                            BoxConstraints(maxWidth: 150.0, maxHeight: 100.0),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                             SizedBox(width: 20),
-                          Icon(Icons.share,color: Colors.white,),
-                          SizedBox(width: 10),
-                            Text(
-                              "Share",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    child: buttonInkWithIcon('Sahre',Icons.share)
                   ),
                 ),
                 SizedBox(
@@ -252,31 +202,7 @@ class _UserResultState extends State<UserResult> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
                     padding: EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromRGBO(30, 186, 142, 1.0),
-                              Color.fromRGBO(30, 142, 186, 1.0)
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0)),
-                      child: Container(
-                        constraints:
-                            BoxConstraints(maxWidth: 200.0, maxHeight: 100.0),
-                        alignment: Alignment.center,
-                        child: Text(
-                          "Leaderboard",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
+                    child: buttonInk('LeaderBoard')
                   ),
                 ),
               ],

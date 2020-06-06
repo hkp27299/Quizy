@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:quizzy/history.dart';
-import 'package:quizzy/join_quiz.dart';
-import 'package:quizzy/play_quiz.dart';
-import 'package:quizzy/user_result.dart';
-import 'login.dart';
-import 'createquiz.dart';
-import 'homepage.dart';
-import 'game_home.dart';
-import 'leaderboard.dart';
+import 'screens/history.dart';
+import 'screens/join_quiz.dart';
+import 'screens/play_quiz.dart';
+import 'screens/user_result.dart';
+import 'screens/login.dart';
+import 'screens/createquiz.dart';
+import 'screens/homepage.dart';
+import 'screens/game_home.dart';
+import 'screens/leaderboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'profile.dart';
-import 'share.dart';
+import 'screens/profile.dart';
+import 'screens/share.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: MyApp(),
@@ -42,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

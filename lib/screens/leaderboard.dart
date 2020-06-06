@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
 import 'game_home.dart';
-import 'auth.dart';
+import '../services/auth.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:flutter_page_indicator/flutter_page_indicator.dart';
-
-import 'dart:io';
-
-import 'dart:typed_data';
-import 'package:flutter_share_file/flutter_share_file.dart';
-import 'package:path_provider/path_provider.dart';
+import '../widget/shareing.dart';
 import 'package:flutter/rendering.dart';
-import 'dart:ui' as ui;
-
-import 'package:flutter/services.dart';
+import '../widget/buttonInkwithimage.dart';
 
 class LeaderBoard extends StatefulWidget {
   static const routename = '/leaderboad';
@@ -27,22 +20,6 @@ class _LeaderBoardState extends State<LeaderBoard> {
     final arg = ModalRoute.of(context).settings.arguments;
     List data = arg;
 
-    void convertWidgetToImage() async {
-      RenderRepaintBoundary renderRepaintBoundary =
-          _containerKey.currentContext.findRenderObject();
-      ui.Image boxImage = await renderRepaintBoundary.toImage(pixelRatio: 1);
-      ByteData byteData =
-          await boxImage.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List uInt8List = byteData.buffer.asUint8List();
-      final tempDir = await getTemporaryDirectory();
-      final file = await new File('${tempDir.path}/image.jpg').create();
-      file.writeAsBytesSync(uInt8List);
-      File testFile = new File("${tempDir.path}/image.jpg");
-      print(testFile);
-      FlutterShareFile.shareImage(
-          tempDir.path, "image.jpg", 'Checkout the leaderboard');
-    }
-
     return Scaffold(
       body: WillPopScope(
         onWillPop: () {
@@ -50,13 +27,15 @@ class _LeaderBoardState extends State<LeaderBoard> {
         },
         child: RepaintBoundary(
           key: _containerKey,
-                  child: Container(
+          child: Container(
             color: Color.fromRGBO(21, 12, 92, 1.0),
-            padding: EdgeInsets.all(30),
+            padding: EdgeInsets.all(10),
             width: MediaQuery.of(context).size.width,
             child: Column(
               children: [
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -93,18 +72,16 @@ class _LeaderBoardState extends State<LeaderBoard> {
                     ],
                   ),
                 ),
-                Divider(
-                  color: Colors.black,
-                  thickness: 1,
+                SizedBox(
+                  height: 5,
                 ),
-                SizedBox(height: 5,),
                 Container(
-                  height: 145,
+                  height: 150,
                   child: Swiper(
                     itemBuilder: (BuildContext context, int i) {
                       return Container(
                         child: new Card(
-                          color: Color.fromRGBO(122, 16, 158,1.0),
+                          color: Color.fromRGBO(1, 6, 51, 1.0),
                           child: Column(
                             children: [
                               SizedBox(
@@ -115,7 +92,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                 width: 100,
                                 decoration: new BoxDecoration(
                                     color: Colors.greenAccent,
-                                    borderRadius: new BorderRadius.circular(20)),
+                                    borderRadius:
+                                        new BorderRadius.circular(20)),
                                 child: Text(
                                   'Rank : ' + (i + 1).toString(),
                                   textAlign: TextAlign.center,
@@ -130,7 +108,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                 height: 10,
                               ),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   Container(
                                     height: 60,
@@ -155,7 +134,8 @@ class _LeaderBoardState extends State<LeaderBoard> {
                                             color: Colors.white),
                                       ),
                                       Text(
-                                        'Score : ' + data[i]['score'].toString(),
+                                        'Score : ' +
+                                            data[i]['score'].toString(),
                                         style: TextStyle(
                                             fontSize: 24,
                                             fontWeight: FontWeight.bold,
@@ -279,45 +259,14 @@ class _LeaderBoardState extends State<LeaderBoard> {
                   height: 50.0,
                   child: RaisedButton(
                     onPressed: () {
-                      convertWidgetToImage();
+                      convertWidgetToImage(
+                          'Checkout the leaderboard \nYou can get game here : https://play.google.com/store/apps/details?id=com.superbros.quizzy',
+                          _containerKey);
                     },
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(80.0)),
                     padding: EdgeInsets.all(0.0),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color.fromRGBO(30, 186, 142, 1.0),
-                              Color.fromRGBO(30, 142, 186, 1.0)
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                          borderRadius: BorderRadius.circular(30.0)),
-                      child: Container(
-                        constraints:
-                            BoxConstraints(maxWidth: 200.0, minHeight: 50.0),
-                        alignment: Alignment.center,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(width: 20),
-                            Icon(Icons.share,color: Colors.white,),
-                            SizedBox(width: 30),
-                            Text(
-                              "Share",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                    child: buttonInkWithIcon('Share',Icons.share)                  ),
                 ),
               ],
             ),

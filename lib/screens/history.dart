@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'leaderboard.dart';
 import 'package:cloud_functions/cloud_functions.dart';
-
+import '../widget/loading.dart';
+import 'game_home.dart';
+import '../services/auth.dart';
+import '../widget/text.dart';
 final HttpsCallable callable =
     CloudFunctions.instance.getHttpsCallable(functionName: 'getScore');
 
@@ -16,14 +19,17 @@ class _HistoryState extends State<History> {
   Widget build(BuildContext context) {
     final arg = ModalRoute.of(context).settings.arguments;
     List data = arg;
-  
+
     String gameid = '';
     var ll;
-
+    final GlobalKey<State> _keyLoader = new GlobalKey<State>();
     Future _getdata() async {
       try {
+        Dialogs.showLoadingDialog(context, _keyLoader);
         final HttpsCallableResult result =
             await callable.call(<String, dynamic>{'quizId': gameid});
+
+        Navigator.of(_keyLoader.currentContext, rootNavigator: true).pop();
         ll = result.data;
       } on CloudFunctionsException catch (e) {
         print('caught firebase functions exception');
@@ -40,14 +46,46 @@ class _HistoryState extends State<History> {
       if (data != null) {
         return Column(
           children: [
-            Text(
-              'History of all quiz',
-              style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Nunito',
-                  color: Colors.white),
-              textAlign: TextAlign.center,
+            SizedBox(
+              height: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(GameHome.routename);
+                  },
+                  child: Icon(
+                    Icons.arrow_back,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+                Text(
+                  'History',
+                  style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Nunito',
+                      color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                Container(
+                  height: 45,
+                  width: 45,
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                      imageUrl,
+                    ),
+                    radius: 60,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
             ),
             Expanded(
               child: ListView.builder(
@@ -62,14 +100,14 @@ class _HistoryState extends State<History> {
                             .pushNamed(LeaderBoard.routename, arguments: ll));
                       },
                       child: new Card(
-                        color: Color.fromRGBO(109, 38, 158, 1.0),
+                        color: Color.fromRGBO(1, 6, 51, 1.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: Container(
                           padding: EdgeInsets.all(10),
                           child: Container(
-                            height: 75,
+                            height: 100,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [

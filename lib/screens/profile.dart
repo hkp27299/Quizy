@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:quizzy/game_home.dart';
-import 'package:quizzy/login.dart';
-import 'auth.dart';
+import 'game_home.dart';
+import 'login.dart';
+import '../services/auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Profile extends StatefulWidget {
